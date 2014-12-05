@@ -2,7 +2,6 @@ from django.conf.urls import patterns, url, include
 from django.views.generic import TemplateView
 from rest_framework_nested import routers
 
-from thinkster_django_angular_boilerplate.views import IndexView
 from thinkster_django_angular_boilerplate.authentication.views import \
     AccountViewSet
 

@@ -1,5 +1,4 @@
 from django.contrib.auth import update_session_auth_hash
-
 from rest_framework import serializers
 
 from thinkster_django_angular_boilerplate.authentication.models import Account
@@ -12,18 +11,21 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ('id', 'email', 'username', 'created_at', 'updated_at',
+        fields = ('email', 'username',
                   'first_name', 'last_name', 'tagline', 'password',
                   'confirm_password',)
         read_only_fields = ('created_at', 'updated_at',)
 
-    def restore_object(self, attrs, instance=None):
+    def update(self, instance, validated_data):
+        print 'outside'
         if instance is not None:
-            instance.username = attrs.get('username', instance.username)
-            instance.tagline = attrs.get('tagline', instance.tagline)
+            print 'inside'
+            instance.username = validated_data.get('username',
+                                                   instance.username)
+            instance.tagline = validated_data.get('tagline', instance.tagline)
 
-            password = attrs.get('password', None)
-            confirm_password = attrs.get('confirm_password', None)
+            password = validated_data.get('password', None)
+            confirm_password = validated_data.get('confirm_password', None)
 
             if password and confirm_password and password == confirm_password:
                 instance.set_password(password)
@@ -31,5 +33,8 @@ class AccountSerializer(serializers.ModelSerializer):
 
                 update_session_auth_hash(self.context.get('request'), instance)
 
-            return instance
-        return Account(**attrs)
+        return instance
+
+    def create(self, validated_data):
+        print 'in serz create'
+        return Account(**validated_data)
